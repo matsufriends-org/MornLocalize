@@ -21,9 +21,11 @@ void Start()
 ### 依存ライブラリ
 
 - UniTask
-    - 通信の待機に用いる
+    - https://github.com/Cysharp/UniTask
+    - 通信の待機に用いている
 - MornSpreadSheet
-    - スプレッドシートの取得/整形に用いる
+    - https://github.com/matsufriends/MornSpreadSheet
+    - スプレッドシートの取得/整形に用いている
 
 # 使い方
 
