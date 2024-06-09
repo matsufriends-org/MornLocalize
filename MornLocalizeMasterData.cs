@@ -42,14 +42,14 @@ namespace MornLocalize
 
         internal async UniTask LoadAsync()
         {
-            var core = new MornSpreadSheetLoader(sheetId, sheetName);
-            var sheet = await core.LoadAsync();
+            var core = new MornSpreadSheetLoader(sheetId);
+            var sheet = await core.LoadSheetAsync(sheetName);
             if (sheet == null)
             {
                 MornLocalizeLogger.LogError("Failed to load sheet");
                 return;
             }
-
+            
             data = new MornLocalizeLanguageDictionary();
             for (var x = 2; x <= sheet.colCount; x++)
             {
