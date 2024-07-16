@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 namespace MornLocalize
@@ -76,3 +77,4 @@ namespace MornLocalize
         }
     }
 }
+#endif
