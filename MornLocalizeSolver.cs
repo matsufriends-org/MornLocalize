@@ -6,16 +6,16 @@ namespace MornLocalize
     [Serializable]
     public class MornLocalizeSolver
     {
-        [SerializeField] private string key;
+        [SerializeField] private string _key;
 
         public string Get(string language)
         {
-            return MornLocalizeMasterData.Instance.Get(language, key);
+            return MornLocalizeMasterData.Instance.Get(language, _key);
         }
 
         public string Get()
         {
-            return MornLocalizeMasterData.Instance.Get(key);
+            return MornLocalizeMasterData.Instance.Get(_key);
         }
     }
 }

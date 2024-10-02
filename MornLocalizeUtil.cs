@@ -7,18 +7,18 @@ namespace MornLocalize
     [Serializable]
     internal class MornLocalizeDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
-        [SerializeField] private TKey[] keys;
-        [SerializeField] private TValue[] values;
+        [SerializeField] private TKey[] _keys;
+        [SerializeField] private TValue[] _values;
 
         public void OnBeforeSerialize()
         {
-            keys = new TKey[Count];
-            values = new TValue[Count];
+            _keys = new TKey[Count];
+            _values = new TValue[Count];
             var index = 0;
             foreach (var pair in this)
             {
-                keys[index] = pair.Key;
-                values[index] = pair.Value;
+                _keys[index] = pair.Key;
+                _values[index] = pair.Value;
                 index++;
             }
         }
@@ -26,9 +26,9 @@ namespace MornLocalize
         public void OnAfterDeserialize()
         {
             Clear();
-            for (var i = 0; i < keys.Length; i++)
+            for (var i = 0; i < _keys.Length; i++)
             {
-                Add(keys[i], values[i]);
+                Add(_keys[i], _values[i]);
             }
         }
     }

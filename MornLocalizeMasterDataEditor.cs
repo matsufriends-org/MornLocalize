@@ -9,8 +9,8 @@ namespace MornLocalize
     [CustomEditor(typeof(MornLocalizeMasterData))]
     internal sealed class MornLocalizeMasterDataEditor : Editor
     {
-        private bool isLoading;
-        private Vector2 scrollPosition;
+        private bool _isLoading;
+        private Vector2 _scrollPosition;
 
         public override void OnInspectorGUI()
         {
@@ -21,16 +21,16 @@ namespace MornLocalize
                 LoadAsync().Forget();
             }
 
-            using (var scrollView = new EditorGUILayout.ScrollViewScope(scrollPosition))
+            using (var scrollView = new EditorGUILayout.ScrollViewScope(_scrollPosition))
             {
-                scrollPosition = scrollView.scrollPosition;
+                _scrollPosition = scrollView.scrollPosition;
                 DrawTable(masterData);
             }
         }
 
         private async UniTask LoadAsync()
         {
-            if (isLoading)
+            if (_isLoading)
             {
                 MornLocalizeLogger.LogWarning("Load is already running!");
                 return;
@@ -38,7 +38,7 @@ namespace MornLocalize
 
             var masterData = (MornLocalizeMasterData)target;
             MornLocalizeLogger.Log("Load Start!");
-            isLoading = true;
+            _isLoading = true;
             try
             {
                 await masterData.LoadAsync();
@@ -49,14 +49,14 @@ namespace MornLocalize
                 Debug.LogError(e);
             }
 
-            isLoading = false;
+            _isLoading = false;
             MornLocalizeLogger.Log("Load End!");
         }
 
         private static void DrawTable(MornLocalizeMasterData masterData)
         {
             var languages = masterData.GetLanguages();
-            var totalWidth = EditorGUIUtility.currentViewWidth - (languages.Length) * 25;
+            var totalWidth = EditorGUIUtility.currentViewWidth - languages.Length * 25;
             var width = totalWidth / (languages.Length + 1);
 
             // Header
