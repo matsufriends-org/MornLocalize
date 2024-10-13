@@ -55,6 +55,11 @@ namespace MornLocalize
 
         private static void DrawTable(MornLocalizeMasterData masterData)
         {
+            if (!masterData.IsValid)
+            {
+                return;
+            }
+
             var languages = masterData.GetLanguages();
             var totalWidth = EditorGUIUtility.currentViewWidth - languages.Length * 25;
             var width = totalWidth / (languages.Length + 1);

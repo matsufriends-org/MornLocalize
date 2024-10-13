@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MornLocalize
 {
-    [CreateAssetMenu(fileName = nameof(MornLocalizeMasterData), menuName = "MornLocalize/" + nameof(MornLocalizeMasterData))]
+    [CreateAssetMenu(fileName = nameof(MornLocalizeMasterData), menuName = "Morn/Localize/" + nameof(MornLocalizeMasterData))]
     public sealed class MornLocalizeMasterData : ScriptableObject
     {
         private static MornLocalizeMasterData _instance;
@@ -38,7 +38,8 @@ namespace MornLocalize
         [SerializeField] private string _sheetId;
         [SerializeField] private string _sheetName;
         [SerializeField] private string _defaultLanguage;
-        [SerializeField] [SerializeReference] private MornLocalizeLanguageDictionary _data;
+        [SerializeField] private MornLocalizeLanguageDictionary _data;
+        internal bool IsValid => _data != null && _data.Count > 0;
 
         internal async UniTask LoadAsync()
         {
@@ -77,9 +78,19 @@ namespace MornLocalize
             }
         }
 
-        internal string[] GetLanguages()
+        public string[] GetLanguages()
         {
             return _data.Keys.ToArray();
+        }
+
+        public int GetLanguageCount()
+        {
+            return _data.Count;
+        }
+
+        public string GetLanguage(int languageIndex)
+        {
+            return _data.Keys.ElementAt(languageIndex);
         }
 
         internal string[] GetKeys()
