@@ -8,38 +8,17 @@ namespace MornLocalize
     [CreateAssetMenu(fileName = nameof(MornLocalizeMasterData), menuName = "Morn/Localize/" + nameof(MornLocalizeMasterData))]
     public sealed class MornLocalizeMasterData : ScriptableObject
     {
-        private static MornLocalizeMasterData _instance;
-        public static MornLocalizeMasterData Instance
-        {
-            get
-            {
-                if (_instance != null)
-                {
-                    return _instance;
-                }
-
-                var instances = Resources.FindObjectsOfTypeAll<MornLocalizeMasterData>();
-                if (instances.Length == 0)
-                {
-                    MornLocalizeLogger.LogError("MornLocalizeMasterData not found");
-                    return null;
-                }
-
-                if (instances.Length > 1)
-                {
-                    MornLocalizeLogger.LogError("MornLocalizeMasterData is duplicated");
-                    return null;
-                }
-
-                _instance = instances[0];
-                return _instance;
-            }
-        }
         [SerializeField] private string _sheetId;
         [SerializeField] private string _sheetName;
         [SerializeField] private string _defaultLanguage;
         [SerializeField] private MornLocalizeLanguageDictionary _data;
         internal bool IsValid => _data != null && _data.Count > 0;
+
+        internal void Open()
+        {
+            var core = new MornSpreadSheetLoader(_sheetId);
+            core.Open(_sheetName);
+        }
 
         internal async UniTask LoadAsync()
         {

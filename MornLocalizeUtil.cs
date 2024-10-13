@@ -1,9 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace MornLocalize
 {
+    public static class MornLocalizeUtil
+    {
+        public static void OpenMasterData()
+        {
+            var masterData = MornLocalizeGlobalSettings.Instance.MasterData;
+            masterData.Open();
+        }
+
+        public static void LoadMasterData()
+        {
+            var masterData = MornLocalizeGlobalSettings.Instance.MasterData;
+            masterData.LoadAsync().Forget();
+        }
+    }
+
     [Serializable]
     internal class MornLocalizeDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {

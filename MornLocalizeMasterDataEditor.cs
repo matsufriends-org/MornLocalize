@@ -16,6 +16,11 @@ namespace MornLocalize
         {
             base.OnInspectorGUI();
             var masterData = (MornLocalizeMasterData)target;
+            if (GUILayout.Button("Open"))
+            {
+                masterData.Open();
+            }
+
             if (GUILayout.Button("Load"))
             {
                 LoadAsync().Forget();
