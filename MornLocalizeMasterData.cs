@@ -55,6 +55,10 @@ namespace MornLocalize
 
                 _data.Add(languageName, localizeKeyToString);
             }
+
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
         }
 
         public string[] GetLanguages()
