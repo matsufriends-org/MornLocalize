@@ -26,7 +26,7 @@ namespace MornLocalize
             var sheet = await core.LoadSheetAsync(_sheetName);
             if (sheet == null)
             {
-                MornLocalizeLogger.LogError("Failed to load sheet");
+                MornLocalizeGlobal.I.LogError("Failed to load sheet");
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace MornLocalize
 
                 if (_data.ContainsKey(languageName))
                 {
-                    MornLocalizeLogger.LogWarning($"Duplicated language: {languageName}");
+                    MornLocalizeGlobal.I.LogWarning($"Duplicated language: {languageName}");
                     continue;
                 }
 
@@ -86,20 +86,20 @@ namespace MornLocalize
         {
             if (_data == null)
             {
-                MornLocalizeLogger.LogError("Data is not loaded");
+                MornLocalizeGlobal.I.LogError("Data is not loaded");
                 return null;
             }
 
             if (!_data.ContainsKey(language))
             {
-                MornLocalizeLogger.LogError($"Language not found: {language}");
+                MornLocalizeGlobal.I.LogError($"Language not found: {language}");
                 return null;
             }
 
             var languageData = _data[language];
             if (!languageData.ContainsKey(key))
             {
-                MornLocalizeLogger.LogError($"Key not found: {key}");
+                MornLocalizeGlobal.I.LogError($"Key not found: {key}");
                 return null;
             }
 
