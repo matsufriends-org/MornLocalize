@@ -9,13 +9,13 @@ namespace MornLocalize
     {
         public static void OpenMasterData()
         {
-            var masterData = MornLocalizeGlobalSettings.Instance.MasterData;
+            var masterData = MornLocalizeGlobal.I.MasterData;
             masterData.Open();
         }
 
         public static void LoadMasterData()
         {
-            var masterData = MornLocalizeGlobalSettings.Instance.MasterData;
+            var masterData = MornLocalizeGlobal.I.MasterData;
             masterData.LoadAsync().Forget();
         }
     }
@@ -45,40 +45,6 @@ namespace MornLocalize
             for (var i = 0; i < _keys.Length; i++)
             {
                 Add(_keys[i], _values[i]);
-            }
-        }
-    }
-
-    internal static class MornLocalizeLogger
-    {
-#if DISABLE_MORN_LOCALIZE_LOG
-        private const bool SHOW_LOG = false;
-#else
-        private const bool SHOW_LOG = true;
-#endif
-        private const string PREFIX = "[MornLocalize] ";
-
-        public static void Log(string message)
-        {
-            if (SHOW_LOG)
-            {
-                Debug.Log(PREFIX + message);
-            }
-        }
-
-        public static void LogError(string message)
-        {
-            if (SHOW_LOG)
-            {
-                Debug.LogError(PREFIX + message);
-            }
-        }
-
-        public static void LogWarning(string message)
-        {
-            if (SHOW_LOG)
-            {
-                Debug.LogWarning(PREFIX + message);
             }
         }
     }

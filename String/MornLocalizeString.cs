@@ -15,9 +15,9 @@ namespace MornLocalize
         {
             return _type switch
             {
-                MornLocalizeStringType.Debug   => _debugString,
-                MornLocalizeStringType.FromKey => MornLocalizeGlobalSettings.Instance.MasterData.Get(language, _key),
-                _                              => throw new ArgumentOutOfRangeException(),
+                MornLocalizeStringType.Debug => _debugString,
+                MornLocalizeStringType.FromKey => MornLocalizeGlobal.I.MasterData.Get(language, _key),
+                _ => throw new ArgumentOutOfRangeException(),
             };
         }
     }
@@ -56,7 +56,7 @@ namespace MornLocalize
                         var valueRect = keyRect;
                         valueRect.y += height;
                         valueRect.height = height * 3;
-                        var masterData = MornLocalizeGlobalSettings.Instance.MasterData;
+                        var masterData = MornLocalizeGlobal.I.MasterData;
                         for (var i = 0; i < masterData.GetLanguageCount(); i++)
                         {
                             var language = masterData.GetLanguage(i);
@@ -93,7 +93,7 @@ namespace MornLocalize
                 case MornLocalizeStringType.Debug:
                     return height * 4;
                 case MornLocalizeStringType.FromKey:
-                    return height * 2 + height * 3 * MornLocalizeGlobalSettings.Instance.MasterData.GetLanguageCount();
+                    return height * 2 + height * 3 * MornLocalizeGlobal.I.MasterData.GetLanguageCount();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
