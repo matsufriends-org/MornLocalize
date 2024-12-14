@@ -62,6 +62,10 @@ namespace MornLocalize
                 {
                     var key = sheet.Get(y, 1).AsString();
                     var value = sheet.Get(y, x).AsString();
+                    if (string.IsNullOrEmpty(key) || key == "key")
+                    {
+                        continue;
+                    }
                     localizeKeyToString.Add(key, value);
                 }
 

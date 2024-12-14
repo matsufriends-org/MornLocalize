@@ -22,6 +22,26 @@ namespace MornLocalize
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }
+        
+        public MornLocalizeStringType GetStringType()
+        {
+            return _type;
+        }
+        
+        public void SetStringType(MornLocalizeStringType type)
+        {
+            _type = type;
+        }
+        
+        public void SetKey(string key)
+        {
+            _key = key;
+        }
+        
+        public void SetDebugString(string debugString)
+        {
+            _debugString = debugString;
+        }
     }
     
 #if UNITY_EDITOR
