@@ -1,8 +1,8 @@
 ﻿namespace MornLocalize
 {
-    internal enum MornLocalizeStringType
+    public enum MornLocalizeStringType
     {
-        Debug,
+        Edit,
         FromKey,
     }
 }

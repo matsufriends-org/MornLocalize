@@ -9,7 +9,7 @@ namespace MornLocalize
     [Serializable]
     public class MornLocalizeString
     {
-        [SerializeField] private MornLocalizeStringType _type = MornLocalizeStringType.Debug;
+        [SerializeField] private MornLocalizeStringType _type = MornLocalizeStringType.Edit;
         [SerializeField] [Multiline] private string _debugString;
         [SerializeField] private string _key;
 
@@ -17,7 +17,7 @@ namespace MornLocalize
         {
             return _type switch
             {
-                MornLocalizeStringType.Debug => _debugString,
+                MornLocalizeStringType.Edit => _debugString,
                 MornLocalizeStringType.FromKey => MornLocalizeGlobal.I.MasterData.Get(language, _key),
                 _ => throw new ArgumentOutOfRangeException(),
             };
@@ -49,7 +49,7 @@ namespace MornLocalize
                 //typeによって描画するプロパティを変える
                 switch ((MornLocalizeStringType)type.enumValueIndex)
                 {
-                    case MornLocalizeStringType.Debug:
+                    case MornLocalizeStringType.Edit:
                         var debugStringRect = new Rect(position.x, position.y + height, position.width, height * 3);
                         EditorGUI.PropertyField(debugStringRect, debugString, GUIContent.none);
                         break;
@@ -93,7 +93,7 @@ namespace MornLocalize
             var type = property.FindPropertyRelative("_type");
             switch ((MornLocalizeStringType)type.enumValueIndex)
             {
-                case MornLocalizeStringType.Debug:
+                case MornLocalizeStringType.Edit:
                     return height * 4;
                 case MornLocalizeStringType.FromKey:
                     return height * 2 + height * 3 * MornLocalizeGlobal.I.MasterData.GetLanguageCount();
