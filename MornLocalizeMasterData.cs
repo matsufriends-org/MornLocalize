@@ -9,6 +9,7 @@ namespace MornLocalize
     public sealed class MornLocalizeMasterData : ScriptableObject
     {
         [SerializeField] private string _sheetId;
+        [SerializeField] private string _apiUrl;
         [SerializeField] private string _sheetName;
         [SerializeField] private string _defaultLanguage;
         [SerializeField] private MornLocalizeLanguageDictionary _data;
@@ -23,7 +24,18 @@ namespace MornLocalize
         internal async UniTask LoadAsync()
         {
             var core = new MornSpreadSheetLoader(_sheetId);
-            var sheet = await core.LoadSheetAsync(_sheetName);
+            
+            MornSpreadSheet.MornSpreadSheet sheet = null;
+            
+            if(_apiUrl != null)
+            {
+                sheet = await core.LoadSheetFromUrlAsync(_apiUrl);
+            }
+            else
+            {
+                sheet = await core.LoadSheetAsync(_sheetName);
+            }
+            
             if (sheet == null)
             {
                 MornLocalizeGlobal.I.LogError("Failed to load sheet");
