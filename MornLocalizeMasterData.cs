@@ -27,7 +27,7 @@ namespace MornLocalize
             
             MornSpreadSheet.MornSpreadSheet sheet = null;
             
-            if(_apiUrl != null)
+            if(!string.IsNullOrEmpty(_apiUrl))
             {
                 sheet = await core.LoadSheetFromUrlAsync(_apiUrl);
             }

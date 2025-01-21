@@ -3,6 +3,9 @@
     "rootNamespace": "MornLocalize",
     "references": [
         "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
         "GUID:19a186abb4037ef468e685dce67ac4ae",
         "GUID:1200e3fab10145c4e94dcd0211606b0c",
         "GUID:9fb3b15b1474476cbe64c6bd63468fb6"

@@ -32,7 +32,12 @@ namespace MornLocalize
         {
             _type = type;
         }
-        
+
+        public string GetKey()
+        {
+            return _key;
+        }
+
         public void SetKey(string key)
         {
             _key = key;
