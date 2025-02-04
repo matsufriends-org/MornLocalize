@@ -1,75 +1,112 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using MornSpreadSheet;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace MornLocalize
 {
-    [CreateAssetMenu(fileName = nameof(MornLocalizeMasterData), menuName = "Morn/Localize/" + nameof(MornLocalizeMasterData))]
+    [CreateAssetMenu(
+        fileName = nameof(MornLocalizeMasterData),
+        menuName = "Morn/Localize/" + nameof(MornLocalizeMasterData))]
     public sealed class MornLocalizeMasterData : ScriptableObject
     {
         [SerializeField] private string _sheetId;
-        [SerializeField] private string _apiUrl;
-        [SerializeField] private string _sheetName;
+        [SerializeField] private string _getSheetsApiUrl;
+        [SerializeField] private List<string> _sheetNames;
         [SerializeField] private string _defaultLanguage;
-        [SerializeField] private MornLocalizeLanguageDictionary _data;
-        internal bool IsValid => _data != null && _data.Count > 0;
+        [SerializeField] private List<MornLocalizeLanguageDictionary> _sheets;
+        internal bool IsValid => _sheets != null && _sheets.Count > 0;
+
+        [System.Serializable]
+        private class SheetNameList
+        {
+            public string[] Names;
+        }
 
         internal void Open()
         {
             var core = new MornSpreadSheetLoader(_sheetId);
-            core.Open(_sheetName);
+            foreach (var sheetName in _sheetNames)
+            {
+                core.Open(sheetName);
+            }
         }
 
         internal async UniTask LoadAsync()
         {
             var core = new MornSpreadSheetLoader(_sheetId);
-            
-            MornSpreadSheet.MornSpreadSheet sheet = null;
-            
-            if(!string.IsNullOrEmpty(_apiUrl))
+            var sheets = new List<MornSpreadSheet.MornSpreadSheet>();
+
+            // Apiからシート一覧を取得し更新
+            if (!string.IsNullOrEmpty(_getSheetsApiUrl))
             {
-                sheet = await core.LoadSheetFromUrlAsync(_apiUrl);
+                using var request = UnityWebRequest.Get(_getSheetsApiUrl);
+                await request.SendWebRequest();
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    var json = request.downloadHandler.text;
+                    var sheetNames = JsonUtility.FromJson<SheetNameList>("{\"Names\":" + json + "}").Names;
+                    _sheetNames.Clear();
+                    _sheetNames.AddRange(sheetNames);
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(this);
+#endif
+                }
+                else
+                {
+                    MornLocalizeGlobal.I.LogError("エラー: " + request.error);
+                }
             }
-            else
+
+            foreach (var sheetName in _sheetNames)
             {
-                sheet = await core.LoadSheetAsync(_sheetName);
+                MornLocalizeGlobal.I.Log("Loading sheet: " + sheetName);
+                var sheet = await core.LoadSheetAsync(sheetName);
+                sheets.Add(sheet);
             }
-            
-            if (sheet == null)
+
+            if (sheets.Count == 0)
             {
                 MornLocalizeGlobal.I.LogError("Failed to load sheet");
                 return;
             }
 
-            _data = new MornLocalizeLanguageDictionary();
-            for (var x = 2; x <= sheet.ColCount; x++)
+            _sheets.Clear();
+            foreach (var sheet in sheets)
             {
-                var languageName = sheet.Get(1, x).AsString();
-                if (string.IsNullOrEmpty(languageName))
+                var sheetData = new MornLocalizeLanguageDictionary();
+                for (var x = 2; x <= sheet.ColCount; x++)
                 {
-                    continue;
-                }
-
-                if (_data.ContainsKey(languageName))
-                {
-                    MornLocalizeGlobal.I.LogWarning($"Duplicated language: {languageName}");
-                    continue;
-                }
-
-                var localizeKeyToString = new MornLocalizeKeyDictionary();
-                for (var y = 2; y <= sheet.RowCount; y++)
-                {
-                    var key = sheet.Get(y, 1).AsString();
-                    var value = sheet.Get(y, x).AsString();
-                    if (string.IsNullOrEmpty(key) || key == "key")
+                    var languageName = sheet.Get(1, x).AsString();
+                    if (string.IsNullOrEmpty(languageName))
                     {
                         continue;
                     }
-                    localizeKeyToString.Add(key, value);
-                }
 
-                _data.Add(languageName, localizeKeyToString);
+                    if (sheetData.ContainsKey(languageName))
+                    {
+                        MornLocalizeGlobal.I.LogWarning($"Duplicated language: {languageName}");
+                        continue;
+                    }
+
+                    var localizeKeyToString = new MornLocalizeKeyDictionary();
+                    for (var y = 2; y <= sheet.RowCount; y++)
+                    {
+                        var key = sheet.Get(y, 1).AsString();
+                        var value = sheet.Get(y, x).AsString();
+                        if (string.IsNullOrEmpty(key) || key == "key")
+                        {
+                            continue;
+                        }
+
+                        localizeKeyToString.Add(key, value);
+                    }
+
+                    sheetData.Add(languageName, localizeKeyToString);
+                }
+                _sheets.Add(sheetData);
             }
 
 #if UNITY_EDITOR
@@ -79,22 +116,44 @@ namespace MornLocalize
 
         public string[] GetLanguages()
         {
-            return _data.Keys.ToArray();
+            var hashSet = new HashSet<string>();
+            foreach (var sheet in _sheets)
+            {
+                foreach (var language in sheet.Keys)
+                {
+                    hashSet.Add(language);
+                }
+            }
+            
+            return hashSet.ToArray(); 
         }
 
         public int GetLanguageCount()
         {
-            return _data.Count;
+            return GetLanguages().Length;
         }
 
         public string GetLanguage(int languageIndex)
         {
-            return _data.Keys.ElementAt(languageIndex);
+            return GetLanguages()[languageIndex];
         }
 
         internal string[] GetKeys()
         {
-            return _data.FirstOrDefault().Value.Keys.ToArray();
+            var hashSet = new HashSet<string>();
+            foreach (var sheet in _sheets)
+            {
+                var languageData = sheet.Values.FirstOrDefault();
+                foreach (var key in languageData.Keys)
+                {
+                    if (!hashSet.Add(key))
+                    {
+                        MornLocalizeGlobal.I.LogError($"Duplicated key: {key}");
+                    }
+                }
+            }
+            
+            return hashSet.ToArray();
         }
 
         public string Get(string key)
@@ -104,26 +163,23 @@ namespace MornLocalize
 
         public string Get(string language, string key)
         {
-            if (_data == null)
+            foreach (var sheet in _sheets)
             {
-                MornLocalizeGlobal.I.LogError("Data is not loaded");
-                return null;
-            }
+                if (!sheet.ContainsKey(language))
+                {
+                    continue;
+                }
 
-            if (!_data.ContainsKey(language))
-            {
-                MornLocalizeGlobal.I.LogError($"Language not found: {language}");
-                return null;
+                if (!sheet[language].ContainsKey(key))
+                {
+                    continue;
+                }
+                
+                return sheet[language][key];
             }
-
-            var languageData = _data[language];
-            if (!languageData.ContainsKey(key))
-            {
-                MornLocalizeGlobal.I.LogError($"Key not found: {key}");
-                return null;
-            }
-
-            return languageData[key];
+            
+            MornLocalizeGlobal.I.LogError($"Not found: [{language}] [{key}]");
+            return "Not Found";
         }
 
         public bool TryGet(string key, out string value)
@@ -133,25 +189,24 @@ namespace MornLocalize
 
         public bool TryGet(string language, string key, out string value)
         {
-            value = "";
-            if (_data == null)
+            foreach (var sheet in _sheets)
             {
-                return false;
-            }
+                if (!sheet.ContainsKey(language))
+                {
+                    continue;
+                }
 
-            if (!_data.ContainsKey(language))
-            {
-                return false;
+                if (!sheet[language].ContainsKey(key))
+                {
+                    continue;
+                }
+                
+                value = sheet[language][key];
+                return true;
             }
-
-            var languageData = _data[language];
-            if (!languageData.ContainsKey(key))
-            {
-                return false;
-            }
-
-            value = languageData[key];
-            return true;
+            
+            value = "Not Found";
+            return false;
         }
     }
 }
