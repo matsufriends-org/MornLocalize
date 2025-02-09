@@ -85,22 +85,18 @@ namespace MornLocalize
                         valueRect.y += height;
                         valueRect.height = height * 3;
                         var masterData = MornLocalizeGlobal.I.MasterData;
-                        for (var i = 0; i < masterData.GetLanguageCount(); i++)
+                        var language = MornLocalizeGlobal.I.DebugLanguageKey;
+                        GUI.enabled = false;
+                        if (masterData.TryGet(language, key.stringValue, out var text))
                         {
-                            var language = masterData.GetLanguage(i);
-                            GUI.enabled = false;
-                            if (masterData.TryGet(language, key.stringValue, out var text))
-                            {
-                                EditorGUI.TextField(valueRect, language, text);
-                            }
-                            else
-                            {
-                                EditorGUI.TextField(valueRect, language, "Not Found");
-                            }
-
-                            GUI.enabled = true;
-                            valueRect.y += height * 3;
+                            EditorGUI.TextField(valueRect, language, text);
                         }
+                        else
+                        {
+                            EditorGUI.TextField(valueRect, language, "Not Found");
+                        }
+                        GUI.enabled = true;
+                        valueRect.y += height * 3;
 
                         break;
                     default:
@@ -121,7 +117,7 @@ namespace MornLocalize
                 case MornLocalizeStringType.Edit:
                     return height * 4;
                 case MornLocalizeStringType.FromKey:
-                    return height * 2 + height * 3 * MornLocalizeGlobal.I.MasterData.GetLanguageCount();
+                    return height * 2 + height * 3;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

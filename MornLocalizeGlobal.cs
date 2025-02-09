@@ -16,7 +16,9 @@ namespace MornLocalize
         [SerializeField] private MornLocalizeMasterData _masterData;
         [SerializeField] private List<MornLocalizeFontSet> _defaultFontSets;
         [SerializeField] private List<MornLocalizeFont> _otherFonts;
+        [SerializeField] private string _debugLanguageKey = "jp";
         public MornLocalizeMasterData MasterData => _masterData;
+        public string DebugLanguageKey => _debugLanguageKey;
 
         public MornLocalizeFont GetDefaultFont(string languageKey)
         {
