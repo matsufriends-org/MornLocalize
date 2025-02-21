@@ -1,3 +1,4 @@
+using MornUGUI;
 using UnityEngine;
 
 namespace MornLocalize.Button
@@ -8,14 +9,17 @@ namespace MornLocalize.Button
     {
         [SerializeField, ReadOnly] private MornLocalizeText[] _texts;
         [SerializeField, ReadOnly] private MornLocalizeFont[] _fonts;
+        [SerializeField, ReadOnly] private MornUGUITextSetter[] _textSetter;
         [SerializeField] private MornLocalizeString _text;
         [SerializeField] private MornLocalizeFontSettings _fontSettings;
+        [SerializeField] private MornUGUITextSizeSettings _sizeSettings;
 
         [ContextMenu("Rebuild")]
         private void Reset()
         {
             _texts = GetComponentsInChildren<MornLocalizeText>();
             _fonts = GetComponentsInChildren<MornLocalizeFont>();
+            _textSetter = GetComponentsInChildren<MornUGUITextSetter>();
         }
 
         private void Update()
@@ -56,6 +60,19 @@ namespace MornLocalize.Button
                         font.Settings = _fontSettings;
                         font.Adjust(global.DebugLanguageKey);
                         global.SetDirty(font);
+                    }
+                }
+            }
+            
+            if (_sizeSettings != null)
+            {
+                foreach (var setter in _textSetter)
+                {
+                    if (setter.SizeSettings != _sizeSettings)
+                    {
+                        setter.SizeSettings = _sizeSettings;
+                        setter.Adjust();
+                        global.SetDirty(setter);
                     }
                 }
             }

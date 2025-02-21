@@ -62,13 +62,11 @@ namespace MornLocalize
             }
 
             var fontChanged = _setter.Text.font != fontSettings.Font;
-            var sizeChanged = _setter.SizeSettings != _settings.SizeSettings;
             var materialChanged = _setter.MaterialType.Key != _settings.MaterialType.Key;
-            var anyChanged = fontChanged || sizeChanged || materialChanged;
+            var anyChanged = fontChanged || materialChanged;
             if (anyChanged)
             {
                 _setter.FontSettings = fontSettings;
-                _setter.SizeSettings = _settings.SizeSettings;
                 _setter.MaterialType.Key = _settings.MaterialType.Key;
                 _setter.Adjust();
                 global.SetDirty(_setter);

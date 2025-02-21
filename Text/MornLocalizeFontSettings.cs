@@ -19,7 +19,6 @@ namespace MornLocalize
 
         [SerializeField] private List<FontSet> _fontSets;
         public MornUGUIMaterialType MaterialType;
-        public MornUGUITextSizeSettings SizeSettings;
 
         public MornUGUIFontSettings GetFontSettings(string languageKey)
         {
