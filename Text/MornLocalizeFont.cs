@@ -19,7 +19,7 @@ namespace MornLocalize
             set => _settings = value;
         }
 
-        private void Awake()
+        private void OnEnable()
         {
             if (Application.isPlaying)
             {

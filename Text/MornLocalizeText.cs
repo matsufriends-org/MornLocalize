@@ -18,7 +18,7 @@ namespace MornLocalize
             set => _text = value;
         }
 
-        private void Awake()
+        private void OnEnable()
         {
             if (Application.isPlaying)
             {
