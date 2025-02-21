@@ -12,43 +12,43 @@ namespace MornLocalize
         [SerializeField] private MornLocalizeStringType _type = MornLocalizeStringType.Edit;
         [SerializeField] [Multiline] private string _debugString;
         [SerializeField] private string _key;
+        public MornLocalizeStringType StringType
+        {
+            get => _type;
+            set => _type = value;
+        }
+        public string Key
+        {
+            get => _key;
+            set => _key = value;
+        }
+        public string DebugString
+        {
+            get => _debugString;
+            set => _debugString = value;
+        }
 
         public string Get(string language)
         {
             return _type switch
             {
-                MornLocalizeStringType.Edit => _debugString,
+                MornLocalizeStringType.Edit    => _debugString,
                 MornLocalizeStringType.FromKey => MornLocalizeGlobal.I.MasterData.Get(language, _key),
-                _ => throw new ArgumentOutOfRangeException(),
+                _                              => throw new ArgumentOutOfRangeException(),
             };
         }
-        
-        public MornLocalizeStringType GetStringType()
-        {
-            return _type;
-        }
-        
-        public void SetStringType(MornLocalizeStringType type)
-        {
-            _type = type;
-        }
 
-        public string GetKey()
+        public bool IsEqual(MornLocalizeString other)
         {
-            return _key;
-        }
+            if (other == null)
+            {
+                return false;
+            }
 
-        public void SetKey(string key)
-        {
-            _key = key;
-        }
-        
-        public void SetDebugString(string debugString)
-        {
-            _debugString = debugString;
+            return _type == other._type && _debugString == other._debugString && _key == other._key;
         }
     }
-    
+
 #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(MornLocalizeString))]
     public class MornLocalizeStringDrawer : PropertyDrawer
@@ -95,9 +95,9 @@ namespace MornLocalize
                         {
                             EditorGUI.TextField(valueRect, language, "Not Found");
                         }
+
                         GUI.enabled = true;
                         valueRect.y += height * 3;
-
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
