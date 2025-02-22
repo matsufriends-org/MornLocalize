@@ -20,7 +20,7 @@ namespace MornLocalize
 
         private void OnEnable()
         {
-            if (Application.isPlaying)
+            if (Application.isPlaying && _core != null)
             {
                 _core.OnLanguageChanged.Subscribe(Adjust).AddTo(this);
                 Adjust(_core.CurrentLanguage);
