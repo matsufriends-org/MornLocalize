@@ -37,12 +37,12 @@ namespace MornLocalize
         {
             if (_isLoading)
             {
-                MornLocalizeGlobal.I.LogWarning("Load is already running!");
+                MornLocalizeGlobal.LogWarning("Load is already running!");
                 return;
             }
 
             var masterData = (MornLocalizeMasterData)target;
-            MornLocalizeGlobal.I.Log("Load Start!");
+            MornLocalizeGlobal.Log("Load Start!");
             _isLoading = true;
             try
             {
@@ -55,7 +55,7 @@ namespace MornLocalize
             }
 
             _isLoading = false;
-            MornLocalizeGlobal.I.Log("Load End!");
+            MornLocalizeGlobal.Log("Load End!");
         }
 
         private static void DrawTable(MornLocalizeMasterData masterData)

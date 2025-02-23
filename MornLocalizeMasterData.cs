@@ -16,7 +16,7 @@ namespace MornLocalize
         [SerializeField] private string _getSheetsApiUrl;
         [SerializeField] private List<string> _sheetNames;
         [SerializeField] private string _defaultLanguage;
-        [SerializeField] private List<MornLocalizeLanguageDictionary> _sheets;
+        [SerializeField] private List<SerializedLanguageDictionary> _sheets;
         internal bool IsValid => _sheets != null && _sheets.Count > 0;
 
         [System.Serializable]
@@ -56,27 +56,27 @@ namespace MornLocalize
                 }
                 else
                 {
-                    MornLocalizeGlobal.I.LogError("エラー: " + request.error);
+                    MornLocalizeGlobal.LogError("エラー: " + request.error);
                 }
             }
 
             foreach (var sheetName in _sheetNames)
             {
-                MornLocalizeGlobal.I.Log("Loading sheet: " + sheetName);
+                MornLocalizeGlobal.Log("Loading sheet: " + sheetName);
                 var sheet = await core.LoadSheetAsync(sheetName);
                 sheets.Add(sheet);
             }
 
             if (sheets.Count == 0)
             {
-                MornLocalizeGlobal.I.LogError("Failed to load sheet");
+                MornLocalizeGlobal.LogError("Failed to load sheet");
                 return;
             }
 
             _sheets.Clear();
             foreach (var sheet in sheets)
             {
-                var sheetData = new MornLocalizeLanguageDictionary();
+                var sheetData = new SerializedLanguageDictionary();
                 for (var x = 2; x <= sheet.ColCount; x++)
                 {
                     var languageName = sheet.Get(1, x).AsString();
@@ -87,11 +87,11 @@ namespace MornLocalize
 
                     if (sheetData.ContainsKey(languageName))
                     {
-                        MornLocalizeGlobal.I.LogWarning($"Duplicated language: {languageName}");
+                        MornLocalizeGlobal.LogWarning($"Duplicated language: {languageName}");
                         continue;
                     }
 
-                    var localizeKeyToString = new MornLocalizeKeyDictionary();
+                    var localizeKeyToString = new SerializedKeyDictionary();
                     for (var y = 2; y <= sheet.RowCount; y++)
                     {
                         var key = sheet.Get(y, 1).AsString();
@@ -148,7 +148,7 @@ namespace MornLocalize
                 {
                     if (!hashSet.Add(key))
                     {
-                        MornLocalizeGlobal.I.LogError($"Duplicated key: {key}");
+                        MornLocalizeGlobal.LogError($"Duplicated key: {key}");
                     }
                 }
             }
@@ -178,7 +178,7 @@ namespace MornLocalize
                 return sheet[language][key];
             }
             
-            MornLocalizeGlobal.I.LogError($"Not found: [{language}] [{key}]");
+            MornLocalizeGlobal.LogError($"Not found: [{language}] [{key}]");
             return "Not Found";
         }
 

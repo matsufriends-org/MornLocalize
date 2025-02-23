@@ -30,7 +30,7 @@ namespace MornLocalize
                 }
             }
 
-            MornLocalizeGlobal.I.LogError("FontSettingsが見つかりません: " + languageKey);
+            MornLocalizeGlobal.LogError("FontSettingsが見つかりません: " + languageKey);
             return null;
         }
     }
