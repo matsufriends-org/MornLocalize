@@ -29,7 +29,7 @@ namespace MornLocalize
             using (var scrollView = new EditorGUILayout.ScrollViewScope(_scrollPosition))
             {
                 _scrollPosition = scrollView.scrollPosition;
-                DrawTable(masterData);
+                //DrawTable(masterData);
             }
         }
 
