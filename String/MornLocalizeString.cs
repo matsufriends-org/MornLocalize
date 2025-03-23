@@ -33,7 +33,7 @@ namespace MornLocalize
             return _type switch
             {
                 MornLocalizeStringType.Edit    => _debugString,
-                MornLocalizeStringType.FromKey => MornLocalizeGlobal.I.MasterData.Get(language, _key),
+                MornLocalizeStringType.FromKey => MornLocalizeGlobal.I.Settings.Get(language, _key),
                 _                              => throw new ArgumentOutOfRangeException(),
             };
         }
@@ -84,7 +84,7 @@ namespace MornLocalize
                         var valueRect = keyRect;
                         valueRect.y += height;
                         valueRect.height = height * 3;
-                        var masterData = MornLocalizeGlobal.I.MasterData;
+                        var masterData = MornLocalizeGlobal.I.Settings;
                         var language = MornLocalizeGlobal.I.DebugLanguageKey;
                         GUI.enabled = false;
                         if (masterData.TryGet(language, key.stringValue, out var text))

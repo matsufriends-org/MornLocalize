@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using MornGlobal;
 using UnityEngine;
@@ -9,22 +10,22 @@ namespace MornLocalize
     public sealed class MornLocalizeGlobal : MornGlobalBase<MornLocalizeGlobal>
     {
         protected override string ModuleName => nameof(MornLocalize);
-        [SerializeField] private MornLocalizeMasterData _masterData;
+        [SerializeField] private MornLocalizeSettings _settings;
         [SerializeField] private List<MornLocalizeFont> _otherFonts;
         [SerializeField] private string _debugLanguageKey = "jp";
-        public MornLocalizeMasterData MasterData => _masterData;
+        public MornLocalizeSettings Settings => _settings;
         internal string DebugLanguageKey => _debugLanguageKey;
 
         public static void OpenMasterData()
         {
-            var masterData = I.MasterData;
+            var masterData = I.Settings;
             masterData.Open();
         }
 
-        public async static UniTask LoadMasterDataAsync()
+        public async static UniTask LoadMasterDataAsync(CancellationToken ct =default)
         {
-            var masterData = I.MasterData;
-            await masterData.LoadAsync();
+            var masterData = I.Settings;
+            await masterData.UpdateAsync(true, true, ct);
         }
         
         internal static void Log(string message)
