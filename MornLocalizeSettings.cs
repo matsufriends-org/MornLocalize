@@ -123,6 +123,7 @@ namespace MornLocalize
         }
     }
 
+#if UNITY_EDITOR
     [CustomEditor(typeof(MornLocalizeSettings))]
     internal sealed class MornLocalizeSettingsEditor : Editor
     {
@@ -186,4 +187,5 @@ namespace MornLocalize
             base.OnInspectorGUI();
         }
     }
+#endif
 }
