@@ -69,7 +69,7 @@ namespace MornLocalize
                 _setter.FontSettings = fontSettings;
                 _setter.MaterialType.Index = _settings.MaterialType.Index;
                 _setter.Adjust();
-                global.SetDirty(_setter);
+                MornLocalizeGlobal.SetDirty(_setter);
             }
         }
     }

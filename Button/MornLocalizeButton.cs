@@ -46,7 +46,7 @@ namespace MornLocalize.Button
                     {
                         text.Text = _text;
                         text.Adjust(global.DebugLanguageKey);
-                        global.SetDirty(text);
+                        MornLocalizeGlobal.SetDirty(text);
                     }
                 }
             }
@@ -59,7 +59,7 @@ namespace MornLocalize.Button
                     {
                         font.Settings = _fontSettings;
                         font.Adjust(global.DebugLanguageKey);
-                        global.SetDirty(font);
+                        MornLocalizeGlobal.SetDirty(font);
                     }
                 }
             }
@@ -72,7 +72,7 @@ namespace MornLocalize.Button
                     {
                         setter.SizeSettings = _sizeSettings;
                         setter.Adjust();
-                        global.SetDirty(setter);
+                        MornLocalizeGlobal.SetDirty(setter);
                     }
                 }
             }

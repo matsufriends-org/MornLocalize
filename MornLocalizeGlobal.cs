@@ -43,11 +43,10 @@ namespace MornLocalize
             I.LogErrorInternal(message);
         }
         
-        internal void SetDirty(Object obj)
+        internal static void SetDirty(Object obj)
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(obj);
-#endif
+            I.SetDirtyInternal();
         }
+        
     }
 }

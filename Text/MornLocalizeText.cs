@@ -58,7 +58,7 @@ namespace MornLocalize
             if (_label.text != text)
             {
                 _label.text = text;
-                global.SetDirty(_label);
+                MornLocalizeGlobal.SetDirty(_label);
             }
         }
     }
