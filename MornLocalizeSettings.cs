@@ -64,6 +64,12 @@ namespace MornLocalize
                         foreach (var row in sheet.GetRows().Skip(1))
                         {
                             var key = row.GetCell(1).AsString();
+                            if (string.IsNullOrWhiteSpace(key))
+                            {
+                                MornLocalizeGlobal.LogWarning($"{sheet.SheetName} シートに空のキーが存在するためスキップします。\n該当行:{row.AsString()}");
+                                continue;
+                            }
+                            
                             for (var colIdx = 1; colIdx <= colCount; colIdx++)
                             {
                                 var language = headerRow.GetCell(colIdx).AsString();
