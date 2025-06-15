@@ -83,7 +83,15 @@ namespace MornLocalize
                                 {
                                     if (row.TryGetCell(colIdx, out var cell))
                                     {
-                                        keyToContentDict.Add(key, cell.AsString());
+                                        var content = cell.AsString();
+                                        
+                                        // ""を"に置き換える処理
+                                        if (content.Contains("\"\""))
+                                        {
+                                            content = content.Replace("\"\"", "\"");
+                                        }
+                                        
+                                        keyToContentDict.Add(key, content);
                                     }
                                     else
                                     {
