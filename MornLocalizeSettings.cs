@@ -1,13 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Cysharp.Threading.Tasks;
-using MornEditor;
 using MornSpreadSheet;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace MornLocalize
 {
@@ -17,7 +11,6 @@ namespace MornLocalize
         [SerializeField] private string _defaultLanguage;
         [SerializeField] private List<MornSpreadSheetMaster> _masterList;
         [SerializeField] private LanguageToDataDictionary _dictionary;
-        internal bool IsLoading;
 
         internal void Open()
         {
@@ -27,92 +20,29 @@ namespace MornLocalize
             }
         }
 
-        public async UniTask UpdateAsync(bool isUpdateSheet, bool isUpdateKey, CancellationToken ct = default)
+        /// <summary>マスターリストを取得</summary>
+        internal IReadOnlyList<MornSpreadSheetMaster> GetMasterList() => _masterList;
+
+        /// <summary>辞書をクリア</summary>
+        internal void ClearDictionary() => _dictionary.Clear();
+
+        /// <summary>ローカライズデータを追加</summary>
+        internal void AddLocalizeData(string language, string key, string content)
         {
-            if (IsLoading)
+            if (!_dictionary.ContainsKey(language))
             {
-                MornLocalizeGlobal.LogWarning("すでにタスクを実行中です");
-                return;
+                _dictionary.Add(language, new KeyToContentDictionary());
             }
 
-            if (_masterList.Count == 0)
+            var keyToContentDict = _dictionary[language];
+            if (!keyToContentDict.ContainsKey(key))
             {
-                MornLocalizeGlobal.LogError("マスターデータがありません。");
-                return;
+                keyToContentDict.Add(key, content);
             }
-
-            IsLoading = true;
-            MornLocalizeGlobal.Log("<size=30>タスク開始</size>");
-            if (isUpdateSheet)
+            else
             {
-                foreach (var master in _masterList)
-                {
-                    await master.UpdateSheetNamesAsync(ct);
-                    await master.DownloadSheetAsync(ct);
-                }
+                MornLocalizeGlobal.LogWarning($"Keyが重複しています。Language: {language} Key: {key} ");
             }
-
-            if (isUpdateKey)
-            {
-                _dictionary.Clear();
-                foreach (var master in _masterList)
-                {
-                    foreach (var sheet in master.Sheets)
-                    {
-                        var headerRow = sheet.GetRow(1);
-                        var colCount = headerRow.GetCells().Count(x => !string.IsNullOrEmpty(x.AsString()));
-                        foreach (var row in sheet.GetRows().Skip(1))
-                        {
-                            var key = row.GetCell(1).AsString();
-                            if (string.IsNullOrWhiteSpace(key))
-                            {
-                                MornLocalizeGlobal.LogWarning($"{sheet.SheetName} シートに空のキーが存在するためスキップします。\n該当行:{row.AsString()}");
-                                continue;
-                            }
-                            
-                            for (var colIdx = 1; colIdx <= colCount; colIdx++)
-                            {
-                                var language = headerRow.GetCell(colIdx).AsString();
-                                if (!_dictionary.ContainsKey(language))
-                                {
-                                    _dictionary.Add(language, new KeyToContentDictionary());
-                                }
-
-                                var keyToContentDict = _dictionary[language];
-                                if (!keyToContentDict.ContainsKey(key))
-                                {
-                                    if (row.TryGetCell(colIdx, out var cell))
-                                    {
-                                        var content = cell.AsString();
-                                        
-                                        // ""を"に置き換える処理
-                                        if (content.Contains("\"\""))
-                                        {
-                                            content = content.Replace("\"\"", "\"");
-                                        }
-                                        
-                                        keyToContentDict.Add(key, content);
-                                    }
-                                    else
-                                    {
-                                        keyToContentDict.Add(key, "Not Found.");
-                                    }
-                                }
-                                else
-                                {
-                                    MornLocalizeGlobal.LogWarning($"Keyが重複しています。Language: {language} Key: {key} ");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-#if UNITY_EDITOR
-            EditorUtility.SetDirty(this);
-#endif
-            IsLoading = false;
-            MornLocalizeGlobal.Log("<size=30>タスク終了</size>");
         }
 
         public string Get(string language, string key)
@@ -135,71 +65,14 @@ namespace MornLocalize
             value = "Not Found.";
             return false;
         }
-    }
 
-#if UNITY_EDITOR
-    [CustomEditor(typeof(MornLocalizeSettings))]
-    internal sealed class MornLocalizeSettingsEditor : Editor
-    {
-        private bool _isLoading;
-        private Vector2 _scrollPosition;
-
-        public override void OnInspectorGUI()
+        public async UniTask UpdateAsync()
         {
-            var settings = (MornLocalizeSettings)target;
-            MornEditorUtil.Draw(
-                new MornEditorUtil.MornEditorOption
-                {
-                    IsEnabled = true,
-                    IsBox = true,
-                    IsIndent = true,
-                    Color = settings.IsLoading ? Color.red : null,
-                    Header = "ステータス: " + (settings.IsLoading ? "タスク実行中" : "待機"),
-                },
-                () =>
-                {
-                    if (GUILayout.Button("URLを開く"))
-                    {
-                        settings.Open();
-                    }
-
-                    MornEditorUtil.Draw(
-                        new MornEditorUtil.MornEditorOption
-                        {
-                            IsEnabled = !settings.IsLoading,
-                        },
-                        () =>
-                        {
-                            if (GUILayout.Button("シート更新 & Keyを登録する"))
-                            {
-                                settings.UpdateAsync(true, true).Forget();
-                            }
-
-                            if (GUILayout.Button("シート更新"))
-                            {
-                                settings.UpdateAsync(true, false).Forget();
-                            }
-
-                            if (GUILayout.Button("Keyを登録する"))
-                            {
-                                settings.UpdateAsync(false, true).Forget();
-                            }
-                        });
-                    MornEditorUtil.Draw(
-                        new MornEditorUtil.MornEditorOption
-                        {
-                            IsEnabled = settings.IsLoading,
-                        },
-                        () =>
-                        {
-                            if (GUILayout.Button("強制解除"))
-                            {
-                                settings.IsLoading = false;
-                            }
-                        });
-                });
-            base.OnInspectorGUI();
+#if UNITY_EDITOR
+            await MornLocalizeDownloader.UpdateWithProgressAsync(this, true, true);
+#else
+            await UniTask.CompletedTask;
+#endif
         }
     }
-#endif
 }

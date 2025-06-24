@@ -11,7 +11,9 @@
         "GUID:1200e3fab10145c4e94dcd0211606b0c",
         "GUID:19a186abb4037ef468e685dce67ac4ae",
         "GUID:3590e33c2330941199195c6e03744566",
-        "GUID:520891f70526d454fa74c098f96aaedd"
+        "GUID:520891f70526d454fa74c098f96aaedd",
+        "GUID:9740960d48181466bbb571c28dde41f6",
+        "MornLocalize.Editor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

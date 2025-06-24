@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using MornGlobal;
 using UnityEngine;
 
+[assembly: InternalsVisibleTo("MornLocalize.Editor")]
 namespace MornLocalize
 {
     [CreateAssetMenu(fileName = nameof(MornLocalizeGlobal), menuName = "Morn/" + nameof(MornLocalizeGlobal))]
@@ -18,35 +20,32 @@ namespace MornLocalize
 
         public static void OpenMasterData()
         {
-            var masterData = I.Settings;
-            masterData.Open();
+            I.Settings.Open();
         }
 
-        public async static UniTask LoadMasterDataAsync(CancellationToken ct =default)
+        public async static UniTask UpdateMasterDataAsync(CancellationToken ct = default)
         {
-            var masterData = I.Settings;
-            await masterData.UpdateAsync(true, true, ct);
+            await I.Settings.UpdateAsync();
         }
-        
+
         internal static void Log(string message)
         {
             I.LogInternal(message);
         }
-        
+
         internal static void LogWarning(string message)
         {
             I.LogWarningInternal(message);
         }
-        
+
         internal static void LogError(string message)
         {
             I.LogErrorInternal(message);
         }
-        
+
         internal static void SetDirty(Object obj)
         {
             I.SetDirtyInternal(obj);
         }
-        
     }
 }
