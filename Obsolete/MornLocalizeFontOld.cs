@@ -1,3 +1,4 @@
+using System;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -6,12 +7,14 @@ using MornUGUI;
 namespace MornLocalize
 {
     [ExecuteAlways]
-    [RequireComponent(typeof(MornUGUITextSetter))]
-    public sealed class MornLocalizeFont : MonoBehaviour
+    [RequireComponent(typeof(MornUGUITextSetterOld))]
+    [Obsolete("廃止予定")]
+    public sealed class MornLocalizeFontOld : MonoBehaviour
     {
-        [SerializeField, ReadOnly] private MornUGUITextSetter _setter;
+        [SerializeField, ReadOnly] private MornUGUITextSetterOld _setter;
         [SerializeField] private MornLocalizeFontSettings _settings;
         [Inject] private MornLocalizeCore _core;
+        
         public MornLocalizeFontSettings Settings
         {
             get => _settings;
@@ -29,7 +32,7 @@ namespace MornLocalize
 
         private void Reset()
         {
-            _setter = GetComponent<MornUGUITextSetter>();
+            _setter = GetComponent<MornUGUITextSetterOld>();
         }
 
         private void Update()
@@ -60,13 +63,13 @@ namespace MornLocalize
                 return;
             }
 
-            var fontChanged = _setter.Font != fontSettings.Font;
-            var materialChanged = _setter.InheritedMaterialType != _settings.MaterialType;
+            var fontChanged = _setter.Text.font != fontSettings.Font;
+            var materialChanged = _setter.MaterialType.Index != _settings.MaterialType.Index;
             var anyChanged = fontChanged || materialChanged;
             if (anyChanged)
             {
-                _setter.InheritedFontSettings = fontSettings;
-                _setter.InheritedMaterialType.Index = _settings.MaterialType.Index;
+                _setter.FontSettings = fontSettings;
+                _setter.MaterialType.Index = _settings.MaterialType.Index;
                 _setter.Adjust();
                 MornLocalizeGlobal.SetDirty(_setter);
             }

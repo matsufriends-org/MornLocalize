@@ -13,7 +13,6 @@ namespace MornLocalize
     {
         protected override string ModuleName => nameof(MornLocalize);
         [SerializeField] private MornLocalizeSettings _settings;
-        [SerializeField] private List<MornLocalizeFont> _otherFonts;
         [SerializeField] private string _debugLanguageKey = "jp";
         public MornLocalizeSettings Settings => _settings;
         internal string DebugLanguageKey => _debugLanguageKey;

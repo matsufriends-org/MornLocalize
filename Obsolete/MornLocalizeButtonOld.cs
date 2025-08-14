@@ -1,15 +1,17 @@
+using System;
 using MornUGUI;
 using UnityEngine;
 
-namespace MornLocalize
+namespace MornLocalize.Button
 {
     [ExecuteAlways]
     [DisallowMultipleComponent]
-    public sealed class MornLocalizeButton : MonoBehaviour
+    [Obsolete("廃止予定")]
+    public sealed class MornLocalizeButtonOld : MonoBehaviour
     {
         [SerializeField, ReadOnly] private MornLocalizeText[] _texts;
-        [SerializeField, ReadOnly] private MornLocalizeFont[] _fonts;
-        [SerializeField, ReadOnly] private MornUGUITextSetter[] _textSetter;
+        [SerializeField, ReadOnly] private MornLocalizeFontOld[] _fonts;
+        [SerializeField, ReadOnly] private MornUGUITextSetterOld[] _textSetter;
         [SerializeField] private MornLocalizeString _text;
         [SerializeField] private MornLocalizeFontSettings _fontSettings;
         [SerializeField] private MornUGUITextSizeSettings _sizeSettings;
@@ -18,8 +20,8 @@ namespace MornLocalize
         private void Reset()
         {
             _texts = GetComponentsInChildren<MornLocalizeText>();
-            _fonts = GetComponentsInChildren<MornLocalizeFont>();
-            _textSetter = GetComponentsInChildren<MornUGUITextSetter>();
+            _fonts = GetComponentsInChildren<MornLocalizeFontOld>();
+            _textSetter = GetComponentsInChildren<MornUGUITextSetterOld>();
         }
 
         private void Update()
@@ -68,9 +70,9 @@ namespace MornLocalize
             {
                 foreach (var setter in _textSetter)
                 {
-                    if (setter.InheritedSizeSettings != _sizeSettings)
+                    if (setter.SizeSettings != _sizeSettings)
                     {
-                        setter.InheritedSizeSettings = _sizeSettings;
+                        setter.SizeSettings = _sizeSettings;
                         setter.Adjust();
                         MornLocalizeGlobal.SetDirty(setter);
                     }
